@@ -11,21 +11,26 @@
 #include <iostream>
 #include <iomanip>
 #include <thread>
+#include <type_traits>
 
+template<
+    typename T,
+    typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type
+>
 class adder {
 private:
-    int x, y;
+    T x, y;
 
 public:
-    __declspec(noinline) adder(int x, int y) : x{ x }, y{ y } {
+    __declspec(noinline) adder(T x, T y) : x{ x }, y{ y } {
         std::printf("Constructing adder (this: 0x%X)\n", reinterpret_cast<std::uintptr_t>(this));
     }
     __declspec(noinline) ~adder() {
         std::printf("Destructing adder (this: 0x%X)\n", reinterpret_cast<std::uintptr_t>(this));
     }
 
-    __declspec(noinline) int add(int z) {
-        std::printf("Performing __thiscall (this: 0x%X) | %d + %d + %d = %d\n",
+    __declspec(noinline) T add(T z) {
+        std::printf("Performing __thiscall (this: 0x%X)\n",
             reinterpret_cast<std::uintptr_t>(this), x, y, z, x + y + z);
         return x + y + z;
     }
@@ -33,9 +38,19 @@ public:
 
 int main()
 {
-    { // thiscall test
-        const auto res = adder{ 5, 8 }.add(9);
-        std::printf("thiscall test res: %d\n", res);
+    { // thiscall test 1
+        const auto res = adder<int>{ 5, 8 }.add(9);
+        std::printf("thiscall test 1 <int> res: %d\n\n", res);
+    }
+
+    { // thiscall test 2
+        const auto res = adder<float>{ 8.f, 2.f }.add(17.f);
+        std::printf("thiscall test 2 <float> res: %f\n\n", res);
+    }
+
+    { // thiscall test 3
+        const auto res = adder<double>{ 11.2, 4.55 }.add(52.01);
+        std::printf("thiscall test 3 <double> res: %f\n\n", res);
     }
 
     std::printf("It's your turn! try to reproduce the above calls from an external process!\n\n");
