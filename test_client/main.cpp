@@ -1,5 +1,5 @@
 /*
-    **  UMEMH - User-Mode Memory Hacking
+    **  UMEMH - User-Mode External Memory Hacking
     * Author: amoy @ v3rmillion.net (amoy#6601)
     * Desc: Test Client to test UMEMH library.
     * 
