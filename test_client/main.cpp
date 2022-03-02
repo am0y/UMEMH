@@ -11,12 +11,11 @@
 #include <iostream>
 #include <iomanip>
 #include <thread>
-#include <type_traits>
+#include <concepts>
 
-template<
-    typename T,
-    typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type
->
+template<typename T>
+concept arithmetic = std::integral<T> or std::floating_point<T>;
+template<arithmetic T>
 class adder {
 private:
     T x, y;
